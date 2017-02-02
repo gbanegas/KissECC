@@ -1,4 +1,4 @@
-import collections
+import collections,sys
 from numpy.testing import assert_almost_equal
 from ecc import EC
 
@@ -49,29 +49,63 @@ class TwistedEC(object):
         assert p <> self.zero
         l = float(self.a*(p.x**2) + (p.y**2)) % self.k
         m = float(1 + (self.d*(p.x**2)*(p.y**2))) % self.k
-        print "First: ", l
-        print "Second: ", m
+        print l
+        print m
         try:
             assert_almost_equal(l, m)
             return True
         except:
+            print("Unexpected error:", sys.exc_info()[0])
             return False
+
+    def mul(self, p, n):
+        """n times <mul> of elliptic curve
+        >>> m = ec.mul(p, n)
+        >>> assert ec.is_valid(m)
+        >>> assert ec.mul(p, 0) == ec.zero
+        """
+        r = self.zero
+        m2 = p
+        while 0 < n:
+            if n & 1 == 1:
+                r = self.add(r, m2)
+                pass
+            n, m2 = n >> 1, self.add(m2, m2)
+            pass
+        return r
+
+    def at(self, x):
+        assert x < self.k
+        sup = float(1-(self.a*(x**2)))
+        low = float(1-(self.d*(x**2)))
+        ysq = float(sup/low)
+        y, my = sqrt_mod(ysq, self.k)
+        return Coord(x, y), Coord(x, my)
 
 
     def add(self, p1, p2):
+        """ Add two points in the TwistedEC
+        """
         if p1 == self.zero: return p2
         if p2 == self.zero: return p1
         factor = self.d*p1.x*p2.x*p1.y*p2.y
-        x = ((p1.x*p2.y)+(p2.x*p1.y)/(1 + factor)) % self.k
-        y = ((p1.y*p2.y)-(p2.x*p1.x)/(1 - factor)) % self.k
+        x = (((p1.x*p2.y)+(p2.x*p1.y))/(1 + factor)) % self.k
+        y = (((p1.y*p2.y)-(self.a*p2.x*p1.x))/(1 - factor)) % self.k
 
         return Coord(x,y)
 
     def double(self, p):
+        """ Double the point p.
+
+        """
         assert p <> self.zero
-        factor = self.d*(p.x**2)*(p.y**2)
-        x = (2*p.x*p.y)/(1+factor) % self.k
-        y = ((p.y**2)-(self.a*(p.x**2)))/(1-factor) % self.k
+        #factor = self.d*(p.x**2)*(p.y**2)
+        l1= (self.a*(p.x**2))
+        l2 = (p.y**2)
+        x = float((2*p.x*p.y)/(l1+l2)) % self.k
+        power_y = p.y**2
+        temp = self.a*(p.x**2)
+        y = float((power_y - temp)/(2-l1-l2)) % self.k
 
         return Coord(x,y)
 
