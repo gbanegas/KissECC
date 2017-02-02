@@ -1,4 +1,5 @@
 import collections,sys
+from modular import ModularOp
 from numpy.testing import assert_almost_equal
 from ecc import EC
 
@@ -19,7 +20,8 @@ def sqrt_mod(n, q):
     >>> assert (sqrt(n, q)[1] ** 2) % q == n
     """
     assert n < q
-    for i in range(1, q):
+    print q
+    for i in xrange(1, q):
         if i * i % q == n:
             return (i, q - i)
         pass
@@ -73,12 +75,16 @@ class TwistedEC(object):
         return r
 
     def at(self, x):
+        m = ModularOp()
         assert x < self.k
         sup = float(1-(self.a*(x**2)))
         low = float(1-(self.d*(x**2)))
         ysq = float(sup/low)
-        y, my = sqrt_mod(ysq, self.k)
-        return Coord(x, y), Coord(x, my)
+        ys = m.modular_sqrt(ysq, self.k)
+        points = []
+        for y in ys:
+            points.append(Coord(x, y))
+        return points
 
 
     def add(self, p1, p2):
