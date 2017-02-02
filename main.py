@@ -3,6 +3,7 @@ import math
 from ecc import EC
 from edwards_curve import EdwardsCurve
 from twistedcurves import TwistedEC
+from elgamal import ElGamal
 
 Coord = collections.namedtuple("Coord", ["x", "y"])
 
@@ -20,15 +21,20 @@ if __name__ == "__main__":
 
     p = (2**255)-19
 
-    et = TwistedEC(3, 2, 17)
+    et = TwistedEC(a, d, p)
 
-    print et.at(1)
-    print et.is_valid(Coord(1,6))
-    temp = Coord(1,math.sqrt(2))
-    p4 = et.double(Coord(1,math.sqrt(2)))
-    p5 = et.add(temp,Coord(1,-math.sqrt(2)))
-
-    print p4
-    print p5
-    print et.is_valid(p4)
-    #print et.mul(Coord(1,6),2)
+    g, _ =  et.at(7)
+    eg = ElGamal(et, g)
+    # mapping value to ec point
+    # "masking": value k to point ec.mul(g, k)
+    # ("imbedding" on proper n:use a point of x as 0 <= n*v <= x < n*(v+1) < q)
+    mapping = [et.mul(g, i) for i in range(eg.n)]
+    print len(mapping)
+    plain = mapping[2]
+    priv = 5
+    pub = eg.gen(priv)
+    print plain
+    cipher = eg.enc(plain, pub, 15)
+    print cipher
+    decoded = eg.dec(cipher, priv)
+    print decoded

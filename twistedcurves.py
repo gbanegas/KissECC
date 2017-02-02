@@ -49,8 +49,6 @@ class TwistedEC(object):
         assert p <> self.zero
         l = float(self.a*(p.x**2) + (p.y**2)) % self.k
         m = float(1 + (self.d*(p.x**2)*(p.y**2))) % self.k
-        print l
-        print m
         try:
             assert_almost_equal(l, m)
             return True
@@ -111,3 +109,17 @@ class TwistedEC(object):
 
     def neg(self, p):
         return Coord(-p.x % self.k, p.y)
+
+    def order(self, g):
+        """order of point g
+        >>> o = et.order(g)
+        >>> assert ec.is_valid(a) and ec.mul(a, o) == ec.zero
+        >>> assert o <= ec.q
+        """
+        assert self.is_valid(g) and g != self.zero
+        for i in range(1, self.k + 1):
+            if self.mul(g, i) == self.zero:
+                return i
+            pass
+        raise Exception("Invalid order")
+    pass

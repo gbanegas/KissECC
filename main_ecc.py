@@ -18,6 +18,7 @@ if __name__ == "__main__":
     # "masking": value k to point ec.mul(g, k)
     # ("imbedding" on proper n:use a point of x as 0 <= n*v <= x < n*(v+1) < q)
     mapping = [ec.mul(g, i) for i in range(eg.n)]
+    print len(mapping)
     plain = mapping[7]
 
     priv = 5
