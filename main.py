@@ -14,9 +14,10 @@ if __name__ == "__main__":
     p1 = Coord(2,1)
     p2 = Coord(1,0)
     p3 = ed.add(p1,p2)
-    print p3
+
     a = -1
     d = float(float(121665)/float(121666))
-    print d
+
     p = (2**255)-19
+
     et = TwistedEC(a, d, p)
