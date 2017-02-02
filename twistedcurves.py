@@ -34,8 +34,8 @@ class TwistedEC(object):
         - k: prime number > 2
         """
         assert k > 2
-        assert a > 0
-        assert d > 0
+        assert a <> 0
+        assert d <> 0
 
         self.a = a
         self.d = d
@@ -51,9 +51,11 @@ class TwistedEC(object):
         m = float(1 + (self.d*(p.x**2)*(p.y**2))) % self.k
         print "First: ", l
         print "Second: ", m
-
-        assert_almost_equal(a, b)
-        return l == m
+        try:
+            assert_almost_equal(l, m)
+            return True
+        except:
+            return False
 
 
     def add(self, p1, p2):
