@@ -8,6 +8,10 @@ It is a toy example with some code from: https://gist.github.com/bellbind/141486
 
 ## You should download and play :) ##
 
+### Things that you are going to need: ###
+
+pip install numpy
+
 ###References:
 
 Twisted Edwards Curves - Daniel J. Bernstein, Peter Birkner, Marc Joye, Tanja Lange and Christiane Peters [https://eprint.iacr.org/2008/013.pdf]
