@@ -16,19 +16,24 @@ class TwistedEC(EC):
         self.zero = Coord(0,1)
 
 
+    def is_valid(self, p):
+        x = p.x
+        y = p.y
+        return (-x*x + y*y - 1 - self.b*x*x*y*y) % self.q == 0
+
     def add(self, p1, p2):
         """ Add two points in the TwistedEC
         """
         if p1 == self.zero: return p2
         if p2 == self.zero: return p1
-        factor = self.d*p1.x*p2.x*p1.y*p2.y
+        factor = self.b*p1.x*p2.x*p1.y*p2.y
         x = (((p1.x*p2.y)+(p2.x*p1.y))/(1 + factor)) % self.q
         y = (((p1.y*p2.y)-(self.a*p2.x*p1.x))/(1 - factor)) % self.q
 
         return Coord(x,y)
 
     def double(self, p):
-        """ Double the point p.
+        """ Double the point p in edwards curve
 
         """
         assert p <> self.zero
