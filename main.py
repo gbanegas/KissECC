@@ -22,19 +22,3 @@ if __name__ == "__main__":
     p = (2**255)-19
 
     et = TwistedEC(a, d, p)
-
-    g, _ =  et.at(7)
-    eg = ElGamal(et, g)
-    # mapping value to ec point
-    # "masking": value k to point ec.mul(g, k)
-    # ("imbedding" on proper n:use a point of x as 0 <= n*v <= x < n*(v+1) < q)
-    mapping = [et.mul(g, i) for i in range(eg.n)]
-    print len(mapping)
-    plain = mapping[2]
-    priv = 5
-    pub = eg.gen(priv)
-    print plain
-    cipher = eg.enc(plain, pub, 15)
-    print cipher
-    decoded = eg.dec(cipher, priv)
-    print decoded

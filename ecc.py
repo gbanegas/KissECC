@@ -1,7 +1,6 @@
 # Basics of Elliptic Curve Cryptography implementation on Python
 import collections
 
-
 def inv(n, q):
     """div on PN modulo a/b mod q as a * inv(b, q) mod q
     >>> assert n * inv(n, q) % q == 1
@@ -37,8 +36,8 @@ class EC(object):
         - a, b: params of curve formula
         - q: prime number
         """
-        assert 0 < a and a < q and 0 < b and b < q and q > 2
-        assert (4 * (a ** 3) + 27 * (b ** 2))  % q != 0
+        #assert 0 < a and a < q and 0 < b and b < q and q > 2
+        #assert (4 * (a ** 3) + 27 * (b ** 2))  % q != 0
         self.a = a
         self.b = b
         self.q = q
