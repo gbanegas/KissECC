@@ -24,11 +24,13 @@ class TwistedEC(EC):
     def add(self, p1, p2):
         """ Add two points in the TwistedEC
         """
-        if p1 == self.zero: return p2
-        if p2 == self.zero: return p1
-        factor = self.b*p1.x*p2.x*p1.y*p2.y
-        x = (((p1.x*p2.y)+(p2.x*p1.y))/(1 + factor)) % self.q
-        y = (((p1.y*p2.y)-(self.a*p2.x*p1.x))/(1 - factor)) % self.q
+        p11 = Coord(p1[0], p1[1])
+        p22 = Coord(p2[0], p2[1])
+        if p11 == self.zero: return p22
+        if p22 == self.zero: return p11
+        factor = self.b*p11.x*p22.x*p11.y*p22.y
+        x = (((p11.x*p22.y)+(p22.x*p11.y))/(1 + factor)) % self.q
+        y = (((p11.y*p22.y)-(self.a*p22.x*p1.x))/(1 - factor)) % self.q
 
         return Coord(x,y)
 
