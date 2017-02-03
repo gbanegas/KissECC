@@ -12,6 +12,7 @@ class TwistedEC(EC):
         - q: prime number > 2
         """
         assert q > 2 and a <> 0 and b <> 0
+        assert a <> b
         self.zero = Coord(0,1)
 
 
@@ -31,7 +32,6 @@ class TwistedEC(EC):
 
         """
         assert p <> self.zero
-        #factor = self.d*(p.x**2)*(p.y**2)
         l1= (self.a*(p.x**2))
         l2 = (p.y**2)
         x = float((2*p.x*p.y)/(l1+l2)) % self.q
