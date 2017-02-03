@@ -1,12 +1,19 @@
 ## Toy example for ECC ##
 
-It is a toy example with some code from: https://gist.github.com/bellbind/1414867
+It is a toy example with some code from:
 
+* https://gist.github.com/bellbind/1414867
+* https://ed25519.cr.yp.to/software.html
+
+## This work: ##
 * It is not fast
 * It is not secure
 * You should never use in "real" applications
 
-## You should download and play :) ##
+## What you should do: ##
+
+If you are interested in a way to see the code working or if you want to learn with small examples. 
+
 
 ### Things that you are going to need: ###
 
