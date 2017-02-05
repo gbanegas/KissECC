@@ -6,9 +6,6 @@ from twistedcurves import TwistedEC
 from eddsa import EdDSA
 from elgamal import ElGamal
 
-Coord = collections.namedtuple("Coord", ["x", "y"])
-
-
 def inv(x, q):
   return power_mod(x,q-2,q)
 
