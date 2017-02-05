@@ -102,10 +102,12 @@ class EdDSA(object):
         if len(signature) != b/4: raise Exception("signature length is wrong")
         if len(pub_k) != b/8: raise Exception("public-key length is wrong")
         R = self.__decodepoint__(signature[0:b/8])
-        A = self.__decodepoint__(publickey)
+        A = self.__decodepoint__(pub_k)
         S = self.__decodeint__(signature[b/8:b/4])
-        h = self.__hint__(self.encodepoint(R) + publickey + message)
-        if self.ed.scalar_multiplication(self.B,S) != self.ed.add(R,self.ed.scalar_multiplication(A,h)):
+        h = self.__hint__(self.encodepoint(R) + pub_k + message)
+        vef = self.ed.scalar_multiplication(self.B,S)
+        sig = self.ed.edwards(R,self.ed.scalar_multiplication(A,h))
+        if vef != sig:
             raise Exception("signature does not pass verification")
         else:
             return True, "Valid"
