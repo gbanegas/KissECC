@@ -3,6 +3,7 @@ from twistedcurves import TwistedEC
 
 Coord = collections.namedtuple("Coord", ["x", "y"])
 b = 256
+l = 2**252 + 27742317777372353535851937790883648493
 def hash_function(m):
     return hashlib.sha512(m).digest()
 
@@ -54,9 +55,7 @@ class EdDSA(object):
 
     def publickey(self, privkey):
         h = hash_function(privkey)
-
         a = 2**(b-2) + sum(2**i * bit(h,i) for i in range(3,b-2))
-        print "Starting multiplication"
         A = self.ed.scalar_multiplication(self.B,a)
         return ByteToHex(self.encodepoint(A))
 
@@ -67,7 +66,7 @@ class EdDSA(object):
         r = self.__hint__(''.join([h[i] for i in range(b/8,b/4)]) + hashval)
         R = self.ed.scalar_multiplication(self.B,r)
         S = (r + self.__hint__(self.encodepoint(R) + pub_key + hashval) * a) % l
-        return self.encodepoint(R) + self.encodeint(S)
+        return self.encodepoint(R) + self.encodeint(S), ByteToHex(self.encodepoint(R) + self.encodeint(S))
 
     def validate_point(self, p):
         return self.ed.is_valid(p)
@@ -81,8 +80,8 @@ class EdDSA(object):
 
     def __decodepoint__(self, s):
         y = sum(2**i * bit(s,i) for i in range(0,b-1))
-        x = xrecover(y)
-        if x & 1 != bit(s,b-1): x = q-x
+        x = self.ed.xrecover(y)
+        if x & 1 != bit(s,b-1): x = self.ed.q-x
         P = Coord(x,y)
         if not self.validate_point(P): raise Exception("decoding point that is not on curve")
         return P
@@ -98,11 +97,15 @@ class EdDSA(object):
         return ''.join([chr(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(b/8)])
 
     def validate(self, signature, message, publickey):
+        pub_k = HexToByte(publickey)
+        sign = signature
         if len(signature) != b/4: raise Exception("signature length is wrong")
-        if len(publickey) != b/8: raise Exception("public-key length is wrong")
+        if len(pub_k) != b/8: raise Exception("public-key length is wrong")
         R = self.__decodepoint__(signature[0:b/8])
         A = self.__decodepoint__(publickey)
         S = self.__decodeint__(signature[b/8:b/4])
         h = self.__hint__(self.encodepoint(R) + publickey + message)
         if self.ed.scalar_multiplication(self.B,S) != self.ed.add(R,self.ed.scalar_multiplication(A,h)):
             raise Exception("signature does not pass verification")
+        else:
+            return True, "Valid"

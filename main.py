@@ -28,12 +28,11 @@ if __name__ == "__main__":
     et = TwistedEC(a, d, q)
     print "Strarting TwistedEC"
     edsa = EdDSA(et)
-    priv = "t"
+    priv = "gustavobanegas"
     print "Create private key: ", priv
     pubk = edsa.publickey(priv)
     print "PubKey: ", pubk
-    signature = edsa.sign("temp", priv, pubk)
-
-    print "Signature: ", signature
-
-    edsa.validate(signature, "temp", pubk)
+    signature, _ = edsa.sign("temp", priv, pubk)
+    print "Signature: ", _
+    valid, _ = edsa.validate(signature, "temp", pubk)
+    print _
