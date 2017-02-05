@@ -8,8 +8,8 @@ from elgamal import ElGamal
 
 Coord = collections.namedtuple("Coord", ["x", "y"])
 
-q = 2**255 - 19
-def inv(x):
+
+def inv(x, q):
   return power_mod(x,q-2,q)
 
 def power_mod(b,e,m):
@@ -21,13 +21,15 @@ def power_mod(b,e,m):
 if __name__ == "__main__":
     # Toy examples
     a = -1
-    d = -121665 * inv(121666)
-
-    l = 2**252 + 27742317777372353535851937790883648493
+    q = 2**255 - 19
+    d = -121665 * inv(121666, q)
+    #l = 2**252 + 27742317777372353535851937790883648493
+    print "Strarting TwistedEC"
     et = TwistedEC(a, d, q)
-
+    print "Strarting TwistedEC"
     edsa = EdDSA(et)
     priv = "t"
+    print "Create private key: ", priv
     pubk = edsa.publickey(priv)
     print "PubKey: ", pubk
     signature = edsa.sign("temp", priv, pubk)

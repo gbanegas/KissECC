@@ -1,19 +1,15 @@
 import hashlib, collections
 from twistedcurves import TwistedEC
 
-
 Coord = collections.namedtuple("Coord", ["x", "y"])
-
 b = 256
-q = 2**255 - 19
-l = 2**252 + 27742317777372353535851937790883648493
 def hash_function(m):
     return hashlib.sha512(m).digest()
 
 def bit(h,i):
   return (ord(h[i/8]) >> (i%8)) & 1
 
-def inv(x):
+def inv(x, q):
   return power_mod(x,q-2,q)
 
 def power_mod(b,e,m):
@@ -22,55 +18,55 @@ def power_mod(b,e,m):
     if e & 1: t = (t*b) % m
     return t
 
-def xrecover(y):
-    xx = (y*y-1) * inv(d*y*y+1)
-    x = power_mod(xx,(q+3)/8,q)
-    if (x*x - xx) % q != 0: x = (x*I) % q
-    if x % 2 != 0: x = q-x
-    return x
 
-def edwards(P,Q):
-  x1 = P[0]
-  y1 = P[1]
-  x2 = Q[0]
-  y2 = Q[1]
-  x3 = (x1*y2+x2*y1) * inv(1+d*x1*x2*y1*y2)
-  y3 = (y1*y2+x1*x2) * inv(1-d*x1*x2*y1*y2)
-  return [x3 % q,y3 % q]
+def ByteToHex( byteStr ):
+    """
+    Convert a byte string to it's hex string representation e.g. for output.
+    """
+    return ''.join( [ "%02X " % ord( x ) for x in byteStr ] ).strip()
 
-def scalarmult(P,e):
-    if e == 0: return [0,1]
-    Q = scalarmult(P,e/2)
-    Q = edwards(Q,Q)
-    if e & 1: Q = edwards(Q,P)
-    return Q
+#-------------------------------------------------------------------------------
 
-d = -121665 * inv(121666)
-By = 4 * inv(5)
-Bx = xrecover(By)
-B = [Bx % q,By % q]
+def HexToByte( hexStr ):
+    """
+    Convert a string hex byte values into a byte string. The Hex Byte values may
+    or may not be space separated.
+    """
+    bytes = []
 
-I = power_mod(2,(q-1)/4,q)
+    hexStr = ''.join( hexStr.split(" ") )
+
+    for i in range(0, len(hexStr), 2):
+        bytes.append( chr( int (hexStr[i:i+2], 16 ) ) )
+
+    return ''.join( bytes )
+
+
 class EdDSA(object):
 
     def __init__(self, ed):
         """ Creating the EdDSA with a instace of TwistedEC"""
         assert isinstance(ed, TwistedEC)
         self.ed = ed
-
+        By = 4 * inv(5, self.ed.q)
+        Bx = self.ed.xrecover(By)
+        self.B = Coord(Bx % self.ed.q, By % self.ed.q)
 
     def publickey(self, privkey):
         h = hash_function(privkey)
+
         a = 2**(b-2) + sum(2**i * bit(h,i) for i in range(3,b-2))
-        A = scalarmult(B,a)
-        return self.encodepoint(A)
+        print "Starting multiplication"
+        A = self.ed.scalar_multiplication(self.B,a)
+        return ByteToHex(self.encodepoint(A))
 
     def sign(self, hashval, privkey, pub):
         h = hash_function(privkey)
+        pub_key = HexToByte(pub)
         a = 2**(b-2) + sum(2**i * bit(h,i) for i in range(3,b-2))
         r = self.__hint__(''.join([h[i] for i in range(b/8,b/4)]) + hashval)
-        R = scalarmult(B,r)
-        S = (r + self.__hint__(self.encodepoint(R) + pub + hashval) * a) % l
+        R = self.ed.scalar_multiplication(self.B,r)
+        S = (r + self.__hint__(self.encodepoint(R) + pub_key + hashval) * a) % l
         return self.encodepoint(R) + self.encodeint(S)
 
     def validate_point(self, p):
@@ -108,5 +104,5 @@ class EdDSA(object):
         A = self.__decodepoint__(publickey)
         S = self.__decodeint__(signature[b/8:b/4])
         h = self.__hint__(self.encodepoint(R) + publickey + message)
-        if scalarmult(B,S) != self.ed.add(R,scalarmult(A,h)):
+        if self.ed.scalar_multiplication(self.B,S) != self.ed.add(R,self.ed.scalar_multiplication(A,h)):
             raise Exception("signature does not pass verification")
