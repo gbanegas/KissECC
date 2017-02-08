@@ -22,8 +22,8 @@ class EdwardsCurve(object):
         y1 = P[1]
         x2 = Q[0]
         y2 = Q[1]
-        x3 = (x1*y2+x2*y1) * Inverse.inv(1+d*x1*x2*y1*y2, self.q)
-        y3 = (y1*y2+x1*x2) * Inverse.inv(1-d*x1*x2*y1*y2, self.q)
+        x3 = (x1*y2+x2*y1) * Inverse().inv(1+d*x1*x2*y1*y2, self.q)
+        y3 = (y1*y2+x1*x2) * Inverse().inv(1-d*x1*x2*y1*y2, self.q)
         return [x3,y3]
 
     def scalar_multiplication(self, P,e):
@@ -34,7 +34,7 @@ class EdwardsCurve(object):
         return Q
 
     def xrecover(self, y):
-        xx = (y*y-1) * inv(self.d*y*y+1)
+        xx = (y*y-1) * Inverse().inv(self.d*y*y+1)
         x = pow(xx,(q+3)/8,self.q)
         if (x*x - xx) % self.q != 0: x = (x*self.I) % self.q
         if x % 2 != 0: x = self.q-x

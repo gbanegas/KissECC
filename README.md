@@ -12,12 +12,12 @@ It is a toy example with some code from:
 
 ## What you should do: ##
 
-If you are interested in a way to see the code working or if you want to learn with small examples. 
+If you are interested in a way to see the code working or if you want to learn with small examples.
 
 
 ### Things that you are going to need: ###
 
-pip install numpy
+Python >= 2.7.x
 
 ###References:
 

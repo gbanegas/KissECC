@@ -1,33 +1,7 @@
 # Basics of Elliptic Curve Cryptography implementation on Python
 import collections
-
-def inv(n, q):
-    """div on PN modulo a/b mod q as a * inv(b, q) mod q
-    >>> assert n * inv(n, q) % q == 1
-    """
-    for i in range(q):
-        if (n * i) % q == 1:
-            return i
-        pass
-    assert False, "unreached"
-    pass
-
-
-def sqrt(n, q):
-    """sqrt on PN modulo: returns two numbers or exception if not exist
-    >>> assert (sqrt(n, q)[0] ** 2) % q == n
-    >>> assert (sqrt(n, q)[1] ** 2) % q == n
-    """
-    assert n < q
-    for i in range(1, q):
-        if i * i % q == n:
-            return (i, q - i)
-        pass
-    raise Exception("not found")
-
-
-
-
+from utils.inversion import Inverse
+from utils.math_utils import MathUtil
 
 class EC(object):
     """System of Elliptic Curve"""
@@ -63,7 +37,7 @@ class EC(object):
         """
         assert x < self.q
         ysq = (x ** 3 + self.a * x + self.b) % self.q
-        y, my = sqrt(ysq, self.q)
+        y, my = MathUtil().sqrt(ysq, self.q)
         return [x, y], [x, my]
 
     def neg(self, p):
@@ -88,10 +62,10 @@ class EC(object):
             return self.zero
         if p1[0] == p2[0]:
             # p1 + p1: use tangent line of p1 as (p1,p1) line
-            l = (3 * p1[0] * p1[0] + self.a) * inv(2 * p1[1], self.q) % self.q
+            l = (3 * p1[0] * p1[0] + self.a) * Inverse().inv(2 * p1[1], self.q) % self.q
             pass
         else:
-            l = (p2[1] - p1[1]) * inv(p2[0] - p1[0], self.q) % self.q
+            l = (p2[1] - p1[1]) * Inverse().inv(p2[0] - p1[0], self.q) % self.q
             pass
         x = (l * l - p1[0] - p2[0]) % self.q
         y = (l * (p1[0] - x) - p1[1]) % self.q
