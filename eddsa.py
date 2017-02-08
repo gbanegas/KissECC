@@ -1,7 +1,7 @@
 import hashlib, collections
 from twistedcurves import TwistedEC
+from exceptions_ecc.signatureerror import SignatureError
 
-Coord = collections.namedtuple("Coord", ["x", "y"])
 b = 256
 l = 2**252 + 27742317777372353535851937790883648493
 def hash_function(m):
@@ -99,15 +99,15 @@ class EdDSA(object):
     def validate(self, signature, message, publickey):
         pub_k = HexToByte(publickey)
         sign = signature
-        if len(signature) != b/4: raise Exception("signature length is wrong")
+        if len(sign) != b/4: raise Exception("signature length is wrong")
         if len(pub_k) != b/8: raise Exception("public-key length is wrong")
-        R = self.__decodepoint__(signature[0:b/8])
+        R = self.__decodepoint__(sign[0:b/8])
         A = self.__decodepoint__(pub_k)
-        S = self.__decodeint__(signature[b/8:b/4])
+        S = self.__decodeint__(sign[b/8:b/4])
         h = self.__hint__(self.encodepoint(R) + pub_k + message)
         vef = self.ed.scalar_multiplication(self.B,S)
         sig = self.ed.edwards(R,self.ed.scalar_multiplication(A,h))
         if vef != sig:
-            raise Exception("signature does not pass verification")
+            raise SignatureError(vef, sig)
         else:
             return True, "Valid"

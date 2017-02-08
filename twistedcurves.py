@@ -9,7 +9,7 @@ class TwistedEC(EC):
 
     def __init__(self, a, b, q):
         EC.__init__(self, a, b, q)
-        """Twisted curve as: (a*x**2 + y**2 = 1 + dx**2y**2) mod
+        """Twisted curve as: (a*x**2 + y**2 = 1 + bx**2y**2) mod q
         - a, b: params of curve formula
         - q: prime number > 2
         """

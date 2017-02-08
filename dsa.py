@@ -36,7 +36,7 @@ class DSA(object):
         """
         assert 0 < r and r < self.n
         m = self.ec.mul(self.g, r)
-        return (m.x, inv(r, self.n) * (hashval + m.x * priv) % self.n)
+        return (m[0], inv(r, self.n) * (hashval + m[0] * priv) % self.n)
 
     def validate(self, hashval, sig, pub):
         """validate signature
@@ -49,5 +49,5 @@ class DSA(object):
         w = inv(sig[1], self.n)
         u1, u2 = hashval * w % self.n, sig[0] * w % self.n
         p = self.ec.add(self.ec.mul(self.g, u1), self.ec.mul(pub, u2))
-        return p.x % self.n == sig[0]
+        return p[0] % self.n == sig[0]
     pass

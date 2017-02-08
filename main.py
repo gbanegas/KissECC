@@ -32,6 +32,6 @@ if __name__ == "__main__":
     print "Signing: ", text_to_sign
     signature, _ = edsa.sign(text_to_sign, priv, pubk)
     print "Signature: ", _
-    valid, _ = edsa.validate(signature, text_to_sign, pubk)
+    valid, _ = edsa.validate(signature, "text_to_sign", pubk)
     print _
     print "Finished."

@@ -26,7 +26,7 @@ def sqrt(n, q):
     raise Exception("not found")
 
 
-Coord = collections.namedtuple("Coord", ["x", "y"])
+
 
 
 class EC(object):
@@ -42,13 +42,13 @@ class EC(object):
         self.b = b
         self.q = q
         # just as unique ZERO value representation for "add": (not on curve)
-        self.zero = Coord(0, 0)
+        self.zero = [0, 0]
         pass
 
     def is_valid(self, p):
         if p == self.zero: return True
-        l = (p.y ** 2) % self.q
-        r = ((p.x ** 3) + self.a * p.x + self.b) % self.q
+        l = (p[1] ** 2) % self.q
+        r = ((p[0] ** 3) + self.a * p[0] + self.b) % self.q
         return l == r
 
     def at(self, x):
@@ -56,21 +56,21 @@ class EC(object):
         - x: int < q
         - returns: ((x, y), (x,-y)) or not found exception
         >>> a, ma = ec.at(x)
-        >>> assert a.x == ma.x and a.x == x
-        >>> assert a.x == ma.x and a.x == x
+        >>> assert a[0] == ma[0] and a[0] == x
+        >>> assert a[0] == ma[0] and a[0] == x
         >>> assert ec.neg(a) == ma
         >>> assert ec.is_valid(a) and ec.is_valid(ma)
         """
         assert x < self.q
         ysq = (x ** 3 + self.a * x + self.b) % self.q
         y, my = sqrt(ysq, self.q)
-        return Coord(x, y), Coord(x, my)
+        return [x, y], [x, my]
 
     def neg(self, p):
         """negate p
         >>> assert ec.is_valid(ec.neg(p))
         """
-        return Coord(p.x, -p.y % self.q)
+        return [p[0], -p[1] % self.q]
 
     def add(self, p1, p2):
         """<add> of elliptic curve: negate of 3rd cross point of (p1,p2) line
@@ -83,19 +83,19 @@ class EC(object):
         """
         if p1 == self.zero: return p2
         if p2 == self.zero: return p1
-        if p1.x == p2.x and (p1.y != p2.y or p1.y == 0):
+        if p1[0] == p2[0] and (p1[1] != p2[1] or p1[1] == 0):
             # p1 + -p1 == 0
             return self.zero
-        if p1.x == p2.x:
+        if p1[0] == p2[0]:
             # p1 + p1: use tangent line of p1 as (p1,p1) line
-            l = (3 * p1.x * p1.x + self.a) * inv(2 * p1.y, self.q) % self.q
+            l = (3 * p1[0] * p1[0] + self.a) * inv(2 * p1[1], self.q) % self.q
             pass
         else:
-            l = (p2.y - p1.y) * inv(p2.x - p1.x, self.q) % self.q
+            l = (p2[1] - p1[1]) * inv(p2[0] - p1[0], self.q) % self.q
             pass
-        x = (l * l - p1.x - p2.x) % self.q
-        y = (l * (p1.x - x) - p1.y) % self.q
-        return Coord(x, y)
+        x = (l * l - p1[0] - p2[0]) % self.q
+        y = (l * (p1[0] - x) - p1[1]) % self.q
+        return [x, y]
 
     def mul(self, p, n):
         """n times <mul> of elliptic curve

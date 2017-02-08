@@ -8,6 +8,7 @@ class ElGamal(object):
     - g: (random) a point on ec
     """
     def __init__(self, ec, g):
+        assert isinstance(ec, EC)
         assert ec.is_valid(g)
         self.ec = ec
         self.g = g
