@@ -29,8 +29,8 @@ class TwistedEC(EC):
     def add(self, p1, p2):
         """ Add two points in the TwistedEC
         """
-        p11 = Coord(p1[0], p1[1])
-        p22 = Coord(p2[0], p2[1])
+        p11 = [p1[0], p1[1]]
+        p22 = [p2[0], p2[1]]
         if p11 == self.zero: return p22
         if p22 == self.zero: return p11
         factor = self.b*p11[0]*p22[0]*p11[1]*p22[1]
