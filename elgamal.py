@@ -26,7 +26,7 @@ class ElGamal(object):
         """encrypt
         - plain: data as a point on ec
         - pub: pub key as points on ec
-        - r: randam int < ec.q
+        - r: random int < ec.q
         - returns: (cipher1, ciper2) as points on ec
         """
         assert self.ec.is_valid(plain)

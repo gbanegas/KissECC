@@ -1,19 +1,27 @@
-N = 256
-k = 252
-t = 124
-g = 127
+from itertools import product
+n = 250
 
-def create_pairs():
-    for i in xrange(0, N):
+window_size = 10
 
-def find_d():
+def generate_d_candidates(difference):
+    for i in product([0,1], repeat=difference):
+        print i
+    new_l = l+bin_list
+    #print new_l
+
 
 
 
 def wide_widow_attack():
     print "Starting...."
-    pairs = create_pairs()
-    d = find_d()
+    w_l = 0
+    w = window_size
+    d_l = 0
+    while(w > n):
+        d_candidates = generate_d_candidates(w-w_l)
+        w_l = w
+        w = w + window_size
+
 
 
 
