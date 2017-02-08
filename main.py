@@ -1,6 +1,5 @@
 import collections
 import math
-from ecc import EC
 from edwards_curve import EdwardsCurve
 from twistedcurves import TwistedEC
 from eddsa import EdDSA

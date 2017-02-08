@@ -17,6 +17,7 @@ def wide_widow_attack():
     w_l = 0
     w = window_size
     d_l = 0
+
     while(w > n):
         d_candidates = generate_d_candidates(w-w_l)
         w_l = w

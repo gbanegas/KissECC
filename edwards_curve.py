@@ -1,6 +1,6 @@
 #/bin/python
 import collections
-from ecc import ECC
+from ecc import EC
 from utils.inversion import Inverse
 
 def inv(x, q):
