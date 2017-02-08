@@ -1,15 +1,6 @@
 from ecc import EC
-
-def inv(n, q):
-    """div on PN modulo a/b mod q as a * inv(b, q) mod q
-    >>> assert n * inv(n, q) % q == 1
-    """
-    for i in range(q):
-        if (n * i) % q == 1:
-            return i
-        pass
-    assert False, "unreached"
-    pass
+from exceptions_ecc.signatureerror import SignatureError
+from utils.inversion import Inverse
 
 class DSA(object):
     """ECDSA
@@ -36,7 +27,7 @@ class DSA(object):
         """
         assert 0 < r and r < self.n
         m = self.ec.mul(self.g, r)
-        return (m[0], inv(r, self.n) * (hashval + m[0] * priv) % self.n)
+        return (m[0], Inverse().inv(r, self.n) * (hashval + m[0] * priv) % self.n)
 
     def validate(self, hashval, sig, pub):
         """validate signature
@@ -46,8 +37,10 @@ class DSA(object):
         """
         assert self.ec.is_valid(pub)
         assert self.ec.mul(pub, self.n) == self.ec.zero
-        w = inv(sig[1], self.n)
+        w = Inverse().inv(sig[1], self.n)
         u1, u2 = hashval * w % self.n, sig[0] * w % self.n
         p = self.ec.add(self.ec.mul(self.g, u1), self.ec.mul(pub, u2))
-        return p[0] % self.n == sig[0]
-    pass
+        if p[0] % self.n == sig[0]:
+            return True, "valid"
+        else:
+            raise SignatureError(p[0] % self.n , sig[0])

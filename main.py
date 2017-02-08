@@ -5,24 +5,17 @@ from edwards_curve import EdwardsCurve
 from twistedcurves import TwistedEC
 from eddsa import EdDSA
 from elgamal import ElGamal
+from utils.inversion import Inverse
 
-def inv(x, q):
-  return power_mod(x,q-2,q)
-
-def power_mod(b,e,m):
-    if e == 0: return 1
-    t = power_mod(b,e/2,m)**2 % m
-    if e & 1: t = (t*b) % m
-    return t
 
 if __name__ == "__main__":
-    # Toy examples
+    # Toy examples wih ed25519
     a = -1
     q = 2**255 - 19
-    d = -121665 * inv(121666, q)
-    #l = 2**252 + 27742317777372353535851937790883648493
+    d = -121665 * Inverse().inv(121666, q)
+    l = 2**252 + 27742317777372353535851937790883648493
     print "Strarting...."
-    et = TwistedEC(a, d, q)
+    et = TwistedEC(a, d, q, l)
     edsa = EdDSA(et)
     priv = "gustavo"
     print "Using private key: ", priv
@@ -32,6 +25,6 @@ if __name__ == "__main__":
     print "Signing: ", text_to_sign
     signature, _ = edsa.sign(text_to_sign, priv, pubk)
     print "Signature: ", _
-    valid, _ = edsa.validate(signature, "text_to_sign", pubk)
+    valid, _ = edsa.validate(signature, text_to_sign, pubk)
     print _
     print "Finished."
