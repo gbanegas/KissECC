@@ -1,7 +1,8 @@
 from itertools import product
 n = 250
-
+N = 10
 window_size = 10
+
 
 def generate_d_candidates(difference, bit_size):
     l =[]
@@ -18,7 +19,19 @@ def generate_d_candidates(difference, bit_size):
 
     #print new_l
 
+def xor_operation(list_one, d):
+    return [0,0,0,1]
 
+#TODO Generate fake v_j
+#TODO finish the xor operation
+#TODO Improve the XOR operation
+#TODO create argmin{S(d)}
+def sum_all_ds(d_candidates):
+    for d in d_candidates:
+        sum_hw_d = 0
+        for j in xrange(1,N):
+            pre_sum = (xor_operation(v[j], d))
+            sum_hw_d = sum_hw_d + pre_sum
 
 
 def wide_widow_attack():
@@ -34,7 +47,8 @@ def wide_widow_attack():
         d_candidates = generate_d_candidates(w-w_l, bits_size)
         w_l = w
         w = w + window_size
-        print d_candidates
+        #print d_candidates
+        d_candidate = sum_all_ds(d_candidates)
 
 
 
