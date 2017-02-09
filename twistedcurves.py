@@ -13,7 +13,7 @@ class TwistedEC(EC):
         """
         assert q > 2 and a <> 0 and b <> 0
         assert a <> b
-        assert order <> none
+        assert order <> None
         self.I = pow(2,(self.q-1)/4,self.q)
         self.zero = [0,1]
         self.l = order
