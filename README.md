@@ -1,3 +1,8 @@
+# Kiss ECC => Keep It Simple Stupid ECC #
+In fact, it is a toy example to work with ECC.
+You will find everything organized in classes and try to understand how to work
+and how it works.
+
 ## Toy example for ECC ##
 
 It is a toy example with some code from:
