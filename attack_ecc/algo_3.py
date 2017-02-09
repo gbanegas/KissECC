@@ -1,6 +1,8 @@
 import random
 from itertools import product
 
+from thread_sum import ThreadSum
+
 n = 250
 N = 1200
 q = 2**255 - 19
@@ -49,16 +51,22 @@ def xor_operation(v, d):
 #TODO create argmin{S(d)}
 def sum_all_ds(d_candidates, interval, mod_value):
     pairs = {}
-    for d in d_candidates:
-        sum_hw_d = 0
-        for j in xrange(1,N):
-            d_prime = bin_to_int(d)+(alpha[j]*q) % mod_value
-            v_j = bin_to_int(v[j]) % mod_value
-            pre_sum = xor_operation(int_to_bin(v_j), int_to_bin(d_prime))[-interval:].count(1)
-            sum_hw_d = sum_hw_d + pre_sum
-        pairs[sum_hw_d] = d
-    print pairs.keys()
+    number_of_threads = 4
+    ds = zip(*[iter(d_candidates)]*number_of_threads)
+    threads = []
+    for i in xrange(0, number_of_threads):
+        threads.append(ThreadSum(i, ds[i],v,alpha,N, mod_value, interval))
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
 
+    for t in threads:
+        key, d = t.return_result()
+        pairs[key] = d
+
+    print key
+    print pairs.keys()
     return min(pairs.keys()) , pairs
 
 
