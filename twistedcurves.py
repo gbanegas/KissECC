@@ -5,7 +5,7 @@ from ecc import EC
 
 class TwistedEC(EC):
 
-    def __init__(self, a, b, q, l = None):
+    def __init__(self, a, b, q, order = None):
         EC.__init__(self, a, b, q)
         """Twisted curve as: (a*x**2 + y**2 = 1 + bx**2y**2) mod q
         - a, b: params of curve formula
@@ -13,9 +13,10 @@ class TwistedEC(EC):
         """
         assert q > 2 and a <> 0 and b <> 0
         assert a <> b
+        assert order <> none
         self.I = pow(2,(self.q-1)/4,self.q)
         self.zero = [0,1]
-        self.l = l
+        self.l = order
         pass
 
     def is_valid(self, p):

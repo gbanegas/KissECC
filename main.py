@@ -12,9 +12,9 @@ if __name__ == "__main__":
     a = -1
     q = 2**255 - 19
     d = -121665 * Inverse().inv(121666, q)
-    l = 2**252 + 27742317777372353535851937790883648493
+    order = 2**252 + 27742317777372353535851937790883648493
     print "Strarting...."
-    et = TwistedEC(a, d, q, l)
+    et = TwistedEC(a, d, q, order)
     edsa = EdDSA(et)
     priv = "gustavo"
     print "Using private key: ", priv
