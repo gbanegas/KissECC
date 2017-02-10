@@ -11,15 +11,23 @@ def bin_to_int(bit_list):
         output = output * 2 + bit
     return output
 
+def resize_lists(v,d):
+    if len(v) > len(d):
+        diff = len(v)-len(d)
+        plus = [0]*diff
+        d = plus + d
+    elif len(d) > len(v):
+        diff = len(d)-len(v)
+        plus = [0]*diff
+        v = plus + v
+    return v, d
+
 def xor_operation(v, d):
-    #l = [int(x) for x in bin(v)[2:]]
+    v, d = resize_lists(v, d)
     size_d = len(d)
-    complementary = [0]*(size_d-len(v))
-    v_list = complementary + v
     result = []
     for j in xrange(0, size_d):
-        result.append((v_list[j]+d[j]) % 2)
-    #print result
+        result.append((v[j]+d[j]) % 2)
     return result
 
 class ThreadSum(threading.Thread):
@@ -43,7 +51,7 @@ class ThreadSum(threading.Thread):
             sum_hw_d = 0
             for j in xrange(0,self.N-1):
                 d_prime = bin_to_int(d)+(self.alpha[j]*q) % self.mod_value
-                v_j = bin_to_int(self.v[j]) % self.mod_value
+                v_j = self.v[j] % self.mod_value
                 pre_sum = xor_operation(int_to_bin(v_j), int_to_bin(d_prime))[-self.interval:].count(1)
                 sum_hw_d = sum_hw_d + pre_sum
             pairs[sum_hw_d] = d

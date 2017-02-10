@@ -1,9 +1,9 @@
 import random
 from itertools import product
 
-n = 250
-N = 100
-d = 1394652206
+n = 30
+N = 2**(n/2)
+d = 4294967296
 q = 2**252 + 27742317777372353535851937790883648493
 window_size = 10
 r = []
@@ -25,6 +25,16 @@ def  generate_r_js():
         a = random.getrandbits(n)
         r.append(a)
 
+def resize_lists(v,d):
+    if len(v) > len(d):
+        diff = len(v)-len(d)
+        plus = [0]*diff
+        d = plus + d
+    elif len(d) > len(v):
+        diff = len(d)-len(v)
+        plus = [0]*diff
+        v = plus + v
+    return v, d
 
 def int_to_bin(number):
     return [int(x) for x in bin(number)[2:]]
@@ -43,13 +53,11 @@ def generate_d_candidates(difference, size):
     return all_combinations
 
 def xor_operation(v, d):
+    v, d = resize_lists(v, d)
     size_d = len(d)
-    complementary = [0]*(size_d-len(v))
-    v_list = complementary + v
     result = []
     for j in xrange(0, size_d):
-        result.append((v_list[j]+d[j]) % 2)
-    #print result
+        result.append((v[j]+d[j]) % 2)
     return result
 
 #TODO create argmin{S(d)}
@@ -63,8 +71,6 @@ def sum_all_ds(d_candidates, interval, mod_value):
             pre_sum = xor_operation(int_to_bin(v_j), int_to_bin(d_prime))[-interval:].count(1)
             sum_hw_d = sum_hw_d + pre_sum
         pairs[sum_hw_d] = d
-    print pairs.keys()
-
     return min(pairs.keys()) , pairs
 
 
@@ -73,21 +79,51 @@ def wide_widow_attack():
     generate_r_js()
     generate_alpha_js()
     generate_v_values()
-    print "Bin d = ", int_to_bin(d)
+    print "d = ",  int_to_bin(d)
     print "Starting...."
-    w_l = 0
+    w_prime = 0
     w = window_size
-    d_l = 0
+    d_prime = 0
+
+    difference = w - w_prime
+    most_significante_variations = []
+    for i in product([0,1], repeat=difference):
+        most_significante_variations.append(list(i))
 
 
-    while(w < 32):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    while(w < n):
         print "Interaction"
         print "w_l ", w_l, " w ", w
         mod_value = 2**w
         d_candidates = generate_d_candidates(w-w_l, w)
         sum_d , d_candidate = sum_all_ds(d_candidates,w-w_l, mod_value)
-        print d_candidate
-
+        d_prime = bin_to_int(d_candidate[sum_d]) %  mod_value
+        print "sum: ", sum_d, " d_candidate = ", int_to_bin(d_prime)
         w_l = w
         w = w + window_size
 
