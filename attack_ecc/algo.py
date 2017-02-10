@@ -3,12 +3,21 @@ from itertools import product
 
 n = 50
 N = 300
-d = 4294967296
+d = 983737618
 q = 2**252 + 27742317777372353535851937790883648493
 window_size = 10
 r = []
 v = []
 alpha = []
+
+def int_to_bin(number):
+    return [int(x) for x in bin(number)[2:]]
+
+def bin_to_int(bit_list):
+    output = 0
+    for bit in bit_list:
+        output = output * 2 + bit
+    return output
 
 def generate_v_values():
     for i in xrange(0, N):
@@ -36,14 +45,7 @@ def resize_lists(v,d):
         v = plus + v
     return v, d
 
-def int_to_bin(number):
-    return [int(x) for x in bin(number)[2:]]
 
-def bin_to_int(bit_list):
-    output = 0
-    for bit in bit_list:
-        output = output * 2 + bit
-    return output
 
 def xor_operation(v, d):
     v, d = resize_lists(v, d)
@@ -87,7 +89,7 @@ def wide_widow_attack():
         for i in product([0,1], repeat=difference):
             most_significante_variations.append(list(i)+d_prime_bin)
         sum_d , d_candidate = sum_all_ds(most_significante_variations,w-w_prime, 2**w)
-        d_prime = bin_to_int(d_candidate[sum_d]) %  mod_value
+        d_prime = bin_to_int(d_candidate[sum_d]) 
         print "sum: ", sum_d, " d_candidate = ", int_to_bin(d_prime)
         w_prime = w
         w = w + window_size
