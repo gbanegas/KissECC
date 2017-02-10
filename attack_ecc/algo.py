@@ -45,13 +45,6 @@ def bin_to_int(bit_list):
         output = output * 2 + bit
     return output
 
-def generate_d_candidates(difference, size):
-    all_combinations = []
-    general_zeros = [0]*(size-difference)
-    for i in product([0,1], repeat=difference):
-        all_combinations.append(list(i)+general_zeros)
-    return all_combinations
-
 def xor_operation(v, d):
     v, d = resize_lists(v, d)
     size_d = len(d)
@@ -86,49 +79,17 @@ def wide_widow_attack():
     d_prime = 0
 
     difference = w - w_prime
-    most_significante_variations = []
-    for i in product([0,1], repeat=difference):
-        most_significante_variations.append(list(i))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    while(w < n):
-        print "Interaction"
-        print "w_l ", w_l, " w ", w
-        mod_value = 2**w
-        d_candidates = generate_d_candidates(w-w_l, w)
-        sum_d , d_candidate = sum_all_ds(d_candidates,w-w_l, mod_value)
+    while (w < n):
+        most_significante_variations = []
+        d_prime = d_prime % 2**w
+        d_prime_bin = int_to_bin(d_prime)
+        for i in product([0,1], repeat=difference):
+            most_significante_variations.append(list(i)+d_prime_bin)
+        sum_d , d_candidate = sum_all_ds(most_significante_variations,w-w_prime, 2**w)
         d_prime = bin_to_int(d_candidate[sum_d]) %  mod_value
         print "sum: ", sum_d, " d_candidate = ", int_to_bin(d_prime)
-        w_l = w
+        w_prime = w
         w = w + window_size
-
-        #print d_candidate
-
     print "Finished."
 
 
