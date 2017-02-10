@@ -1,8 +1,8 @@
 import random
 from itertools import product
 
-n = 30
-N = 2**(n/2)
+n = 50
+N = 300
 d = 4294967296
 q = 2**252 + 27742317777372353535851937790883648493
 window_size = 10
@@ -81,7 +81,8 @@ def wide_widow_attack():
     difference = w - w_prime
     while (w < n):
         most_significante_variations = []
-        d_prime = d_prime % 2**w
+        mod_value = 2**w
+        d_prime = d_prime % mod_value
         d_prime_bin = int_to_bin(d_prime)
         for i in product([0,1], repeat=difference):
             most_significante_variations.append(list(i)+d_prime_bin)
