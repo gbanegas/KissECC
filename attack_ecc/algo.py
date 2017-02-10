@@ -2,8 +2,8 @@ import random
 from itertools import product
 
 n = 50
-N = 300
-d = 983737618
+N = 500
+d = 1983737618
 q = 2**252 + 27742317777372353535851937790883648493
 window_size = 10
 r = []
@@ -74,22 +74,30 @@ def wide_widow_attack():
     generate_r_js()
     generate_alpha_js()
     generate_v_values()
-    print "d = ",  int_to_bin(d)
+    print "d = ",  int_to_bin(d), " len: ", len(int_to_bin(d))
     print "Starting...."
+    window_size = 10
     w_prime = 0
     w = window_size
     d_prime = 0
 
+#TODO: Change to least significant bits
+#TODO: The HW will be "form w' to w"
     difference = w - w_prime
+    variations = []
+    for i in product([0,1], repeat=difference):
+        variations.append(list(i))
     while (w < n):
-        most_significante_variations = []
+        print "w: ", w
+        print "w_prime: ", w_prime
         mod_value = 2**w
         d_prime = d_prime % mod_value
         d_prime_bin = int_to_bin(d_prime)
-        for i in product([0,1], repeat=difference):
-            most_significante_variations.append(list(i)+d_prime_bin)
-        sum_d , d_candidate = sum_all_ds(most_significante_variations,w-w_prime, 2**w)
-        d_prime = bin_to_int(d_candidate[sum_d]) 
+        to_iterate = []
+        for variation in variations:
+            to_iterate.append(variation+d_prime_bin)
+        sum_d , d_candidate = sum_all_ds(to_iterate, w, mod_value)
+        d_prime = bin_to_int(d_candidate[sum_d])
         print "sum: ", sum_d, " d_candidate = ", int_to_bin(d_prime)
         w_prime = w
         w = w + window_size
@@ -98,3 +106,7 @@ def wide_widow_attack():
 
 
 wide_widow_attack()
+
+#lista = [1,2,3,4,5,6,7,8]
+#print lista[3:5]
+#print lista[-2]
