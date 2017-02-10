@@ -3,7 +3,7 @@ from itertools import product
 
 n = 50
 N = 500
-d = 1983737618
+d = 983737618
 q = 2**252 + 27742317777372353535851937790883648493
 window_size = 10
 r = []
@@ -45,17 +45,10 @@ def resize_lists(v,d):
         v = plus + v
     return v, d
 
-
-
 def xor_operation(v, d):
-    v, d = resize_lists(v, d)
-    size_d = len(d)
-    result = []
-    for j in xrange(0, size_d):
-        result.append((v[j]+d[j]) % 2)
+    result = v ^ d
     return result
 
-#TODO create argmin{S(d)}
 def sum_all_ds(d_candidates, interval, mod_value):
     pairs = {}
     for d in d_candidates:
@@ -63,9 +56,18 @@ def sum_all_ds(d_candidates, interval, mod_value):
         for j in xrange(1,N):
             d_prime = bin_to_int(d)+(alpha[j]*q) % mod_value
             v_j = v[j] % mod_value
-            pre_sum = xor_operation(int_to_bin(v_j), int_to_bin(d_prime))[-interval:].count(1)
+            pre_sum = int_to_bin(xor_operation(v_j, d_prime))[-interval:].count(1)
             sum_hw_d = sum_hw_d + pre_sum
-        pairs[sum_hw_d] = d
+        try:
+            #print pairs[sum_hw_d]
+            if pairs[sum_hw_d] <> None:
+                val = pairs[sum_hw_d]
+                if val.count(1) > d.count(1):
+                    pairs[sum_hw_d] = d
+        except Exception as e:
+            pairs[sum_hw_d] = d
+
+
     return min(pairs.keys()) , pairs
 
 
