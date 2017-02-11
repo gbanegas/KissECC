@@ -1,6 +1,6 @@
 import threading
 
-q = 2**255 - 19
+q = 2**252 + 27742317777372353535851937790883648493
 
 def int_to_bin(number):
     return [int(x) for x in bin(number)[2:]]
@@ -11,23 +11,8 @@ def bin_to_int(bit_list):
         output = output * 2 + bit
     return output
 
-def resize_lists(v,d):
-    if len(v) > len(d):
-        diff = len(v)-len(d)
-        plus = [0]*diff
-        d = plus + d
-    elif len(d) > len(v):
-        diff = len(d)-len(v)
-        plus = [0]*diff
-        v = plus + v
-    return v, d
-
 def xor_operation(v, d):
-    v, d = resize_lists(v, d)
-    size_d = len(d)
-    result = []
-    for j in xrange(0, size_d):
-        result.append((v[j]+d[j]) % 2)
+    result = v ^ d
     return result
 
 class ThreadSum(threading.Thread):
@@ -44,17 +29,23 @@ class ThreadSum(threading.Thread):
         self.d = []
         self.interval = interval
 
-
     def run(self):
         pairs = {}
         for d in self.d_list:
             sum_hw_d = 0
-            for j in xrange(0,self.N-1):
+            for j in xrange(1,self.N):
                 d_prime = bin_to_int(d)+(self.alpha[j]*q) % self.mod_value
                 v_j = self.v[j] % self.mod_value
-                pre_sum = xor_operation(int_to_bin(v_j), int_to_bin(d_prime))[-self.interval:].count(1)
+                pre_sum = int_to_bin(xor_operation(v_j, d_prime))[-self.interval:].count(1)
                 sum_hw_d = sum_hw_d + pre_sum
-            pairs[sum_hw_d] = d
+            try:
+                #print pairs[sum_hw_d]
+                if pairs[sum_hw_d] <> None:
+                    val = pairs[sum_hw_d]
+                    if val.count(1) > d.count(1):
+                        pairs[sum_hw_d] = d
+            except Exception as e:
+                pairs[sum_hw_d] = d
         self.key = min(pairs.keys())
         self.d = pairs[self.key]
 
