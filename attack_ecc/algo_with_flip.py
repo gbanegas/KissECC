@@ -1,12 +1,14 @@
 import random, math
 from itertools import product
 
-n = 70
-N = 750
-d = 1123983737618
+n = 512
+N = 1000
+#d = 1123983737618
+#d = 165463185775234288092201526257649332892
+d = 13393249480990767973698914121061987209673507827659760595482620214891467806973397091277092174174393961305025200909026701058146674630543302845868229392185528
 q = 2**252 + 27742317777372353535851937790883648493
 window_size = 10
-RANDOMIZED_BITS = 45
+RANDOMIZED_BITS = 256
 r = []
 v = []
 alpha = []
@@ -20,12 +22,7 @@ def bin_to_int(bit_list):
         output = output * 2 + bit
     return output
 
-def dff(list1, list2):
-    diff = 0
-    for i in xrange(0, len(list1)):
-        if list1[i] != list2[i]:
-            diff = diff+1
-    return diff
+
 
 def bit_flip_random(bit_list):
     bit_list_t = bit_list[:]
@@ -35,23 +32,17 @@ def bit_flip_random(bit_list):
             bit_list_t[pos_bit_to_flip] = 0
         else:
             bit_list_t[pos_bit_to_flip] = 1
-        #bit = (bit_list[pos_bit_to_flip] + 1 ) % 2
-        #bit_list[pos_bit_to_flip] = bit
+
     return bit_list_t
 
-#def generate_v_values():
-#    for i in xrange(0, N):
-        #value = d + (alpha[i]*q)
-        #v.append(value)
+
 
 def generate_v_values_with_bit_flip():
     for i in xrange(0, N):
         value = d + (alpha[i]*q)
-        #print value
         bit_list = int_to_bin(value)
         bit_list_flipped = bit_flip_random(bit_list)
         value_flipped = bin_to_int(bit_list_flipped)
-        print "DIFF: ", dff(bit_list, bit_list_flipped)
         v.append(value_flipped)
 
 def  generate_alpha_js():
@@ -89,7 +80,6 @@ def sum_all_ds(d_candidates, interval, mod_value):
             pre_sum = int_to_bin(xor_operation(v_j, d_prime))[-interval:].count(1)
             sum_hw_d = sum_hw_d + pre_sum
         try:
-            #print pairs[sum_hw_d]
             if pairs[sum_hw_d] <> None:
                 val = pairs[sum_hw_d]
                 if val.count(1) > d.count(1):
@@ -100,6 +90,11 @@ def sum_all_ds(d_candidates, interval, mod_value):
 
     return min(pairs.keys()) , pairs
 
+def test_d(to_test):
+    """ Function to test the candidate to d. In our case, it is a comparasion
+    with the original d. However, in a real case could be the ciphered text with the original
+    and the candidate"""
+    return (d==to_test)
 
 
 def wide_widow_attack():
@@ -112,9 +107,6 @@ def wide_widow_attack():
     w_prime = 0
     w = window_size
     d_prime = 0
-
-#TODO: Change to least significant bits
-#TODO: The HW will be "form w' to w"
     difference = w - w_prime
     variations = []
     for i in product([0,1], repeat=difference):
@@ -133,6 +125,9 @@ def wide_widow_attack():
         print "sum: ", sum_d, " d_candidate = ", int_to_bin(d_prime)
         w_prime = w
         w = w + window_size
+
+        if test_d(d_prime):
+            w = w+n
     if (d == d_prime):
         print "FOUND KEY."
     else:
