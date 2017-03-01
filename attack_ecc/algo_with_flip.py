@@ -1,12 +1,12 @@
 import random, math
 from itertools import product
 
-n = 50
-N = 500
-d = 123983737618
+n = 70
+N = 750
+d = 1123983737618
 q = 2**252 + 27742317777372353535851937790883648493
 window_size = 10
-RANDOMIZED_BITS = 35
+RANDOMIZED_BITS = 45
 r = []
 v = []
 alpha = []
@@ -21,29 +21,38 @@ def bin_to_int(bit_list):
     return output
 
 def dff(list1, list2):
-    outputlist = []
-    list3 = list1 + list2
-    for i in range(0, len(list3)):
-        if ((list3[i] not in list1) or (list3[i] not in list2)) and (list3[i] not in outputlist):
-             outputlist[len(outputlist):] = [list3[i]]
-    return outputlist
+    diff = 0
+    for i in xrange(0, len(list1)):
+        if list1[i] != list2[i]:
+            diff = diff+1
+    return diff
 
 def bit_flip_random(bit_list):
+    bit_list_t = bit_list[:]
     for i in xrange(0, RANDOMIZED_BITS):
         pos_bit_to_flip = random.randint(0, len(bit_list)-1)
-        #print "Flipping: ", pos_bit_to_flip
-        if bit_list[pos_bit_to_flip] == 1:
-            bit_list[pos_bit_to_flip] = 0
+        if bit_list_t[pos_bit_to_flip] == 1:
+            bit_list_t[pos_bit_to_flip] = 0
         else:
-            bit_list[pos_bit_to_flip] = 1
+            bit_list_t[pos_bit_to_flip] = 1
         #bit = (bit_list[pos_bit_to_flip] + 1 ) % 2
         #bit_list[pos_bit_to_flip] = bit
-    return bit_list
+    return bit_list_t
 
-def generate_v_values():
+#def generate_v_values():
+#    for i in xrange(0, N):
+        #value = d + (alpha[i]*q)
+        #v.append(value)
+
+def generate_v_values_with_bit_flip():
     for i in xrange(0, N):
         value = d + (alpha[i]*q)
-        v.append(value)
+        #print value
+        bit_list = int_to_bin(value)
+        bit_list_flipped = bit_flip_random(bit_list)
+        value_flipped = bin_to_int(bit_list_flipped)
+        print "DIFF: ", dff(bit_list, bit_list_flipped)
+        v.append(value_flipped)
 
 def  generate_alpha_js():
     for i in xrange(1, N+1):
@@ -96,7 +105,7 @@ def sum_all_ds(d_candidates, interval, mod_value):
 def wide_widow_attack():
     generate_r_js()
     generate_alpha_js()
-    generate_v_values()
+    generate_v_values_with_bit_flip()
     print "d = ",  int_to_bin(d), " len: ", len(int_to_bin(d))
     print "Starting...."
     window_size = 10
