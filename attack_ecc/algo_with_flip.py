@@ -2,13 +2,13 @@ import random, math
 from itertools import product
 
 n = 512
-N = 1000
+N = 100
 #d = 1123983737618
-#d = 165463185775234288092201526257649332892
+#d = 265463185775234288092201526257649332892
 d = 13393249480990767973698914121061987209673507827659760595482620214891467806973397091277092174174393961305025200909026701058146674630543302845868229392185528
 q = 2**252 + 27742317777372353535851937790883648493
 window_size = 10
-RANDOMIZED_BITS = 256
+RANDOMIZED_BITS = 64
 r = []
 v = []
 alpha = []
@@ -109,9 +109,11 @@ def wide_widow_attack():
     d_prime = 0
     difference = w - w_prime
     variations = []
+    first_pass = True
     for i in product([0,1], repeat=difference):
         variations.append(list(i))
-    while (w < n):
+
+    while (w < (n + window_size + window_size)):
         print "w: ", w
         print "w_prime: ", w_prime
         mod_value = 2**w
@@ -128,6 +130,7 @@ def wide_widow_attack():
 
         if test_d(d_prime):
             w = w+n
+
     if (d == d_prime):
         print "FOUND KEY."
     else:
