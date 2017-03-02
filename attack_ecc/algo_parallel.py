@@ -1,18 +1,23 @@
 import random
+import math
 from itertools import product
 from itertools import chain
 from thread_sum import ThreadSum
 
 
 
-n = 50
-N = 40
-d = 83737618
+n = 1024
+N = 200
+d = 13393249480990767973698914121061987209673507827659760595482620214891467806973397091277092174174393961305025200909026701058146674630543302845868229392185528
 q = 2**252 + 27742317777372353535851937790883648493
 window_size = 10
+RANDOMIZED_BITS = 692
 r = []
 v = []
 alpha = []
+
+
+
 
 def generate_v_values():
     for i in xrange(0, N):
@@ -22,13 +27,35 @@ def generate_v_values():
 def  generate_alpha_js():
     for i in xrange(1, N+1):
         al = r[i] - r[0]
-        alpha.append(al)
+        alpha.append(int(math.fabs(al)))
 
 def  generate_r_js():
     for i in xrange(0, N+1):
         a = random.getrandbits(n)
-        r.append(a)
+        r.append(int(math.fabs(a)))
 
+def bit_flip_random(bit_list):
+    bit_list_t = bit_list[:]
+    pos_list = []
+    for i in xrange(0, RANDOMIZED_BITS):
+        pos_bit_to_flip = random.randint(0, len(bit_list)-1)
+        while(pos_bit_to_flip in pos_list):
+            pos_bit_to_flip = random.randint(0, len(bit_list)-1)
+        if bit_list_t[pos_bit_to_flip] == 1:
+            bit_list_t[pos_bit_to_flip] = 0
+        else:
+            bit_list_t[pos_bit_to_flip] = 1
+
+    return bit_list_t
+
+def generate_v_values_with_bit_flip():
+    for i in xrange(0, N):
+        value = d + (alpha[i]*q)
+        bit_list = int_to_bin(value)
+        #print len(bit_list)
+        bit_list_flipped = bit_flip_random(bit_list)
+        value_flipped = bin_to_int(bit_list_flipped)
+        v.append(value_flipped)
 
 def int_to_bin(number):
     return [int(x) for x in bin(number)[2:]]
@@ -85,7 +112,7 @@ def test_d(to_test):
 def wide_widow_attack():
     generate_r_js()
     generate_alpha_js()
-    generate_v_values()
+    generate_v_values_with_bit_flip()
     print "d = ",  int_to_bin(d), " len: ", len(int_to_bin(d))
     print "Starting...."
     w_prime = 0
