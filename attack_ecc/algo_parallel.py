@@ -6,12 +6,13 @@ from thread_sum import ThreadSum
 
 
 
-n = 1024
+n = 100
 N = 200
-d = 13393249480990767973698914121061987209673507827659760595482620214891467806973397091277092174174393961305025200909026701058146674630543302845868229392185528
+d = 1339324948
+#d = 13393249480990767973698914121061987209673507827659760595482620214891467806973397091277092174174393961305025200909026701058146674630543302845868229392185528
 q = 2**252 + 27742317777372353535851937790883648493
 window_size = 10
-RANDOMIZED_BITS = 512
+RANDOMIZED_BITS = 30
 r = []
 v = []
 alpha = []
@@ -37,6 +38,9 @@ def  generate_r_js():
 def bit_flip_random(bit_list):
     bit_list_t = bit_list[:]
     pos_list = []
+    if len(bit_list) < RANDOMIZED_BITS:
+        raise Exception("Randomized bigger then d+(a*r)")
+        print "Lenght: ", len(bit_list)
     for i in xrange(0, RANDOMIZED_BITS):
         pos_bit_to_flip = random.randint(0, len(bit_list)-1)
         while(pos_bit_to_flip in pos_list):
