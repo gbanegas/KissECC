@@ -1,12 +1,12 @@
 import random
 from itertools import product
-
+from itertools import chain
 from thread_sum import ThreadSum
 
 
 
 n = 50
-N = 500
+N = 40
 d = 83737618
 q = 2**252 + 27742317777372353535851937790883648493
 window_size = 10
@@ -39,12 +39,19 @@ def bin_to_int(bit_list):
         output = output * 2 + bit
     return output
 
+def groupsof(n, xs):
+    if len(xs) < n:
+        return [xs]
+    else:
+        return chain([xs[0:n]], groupsof(n, xs[n:]))
 
 def sum_all_ds(d_candidates, interval, mod_value):
     pairs = {}
     number_of_threads = 4
-    ds = zip(*[iter(d_candidates)]*number_of_threads)
+    ds = list(groupsof(len(d_candidates)/number_of_threads, d_candidates))
+    #ds = zip(*[iter(d_candidates)]*number_of_threads)
     threads = []
+    #print "DS: ", len(ds)
     for i in xrange(0, number_of_threads):
         threads.append(ThreadSum(i, ds[i], v, alpha, N, mod_value, interval))
     for t in threads:
@@ -62,11 +69,18 @@ def sum_all_ds(d_candidates, interval, mod_value):
         except Exception as e:
             pairs[key] = d
 
-    print key
-    print pairs.keys()
+    #print pairs
+
+    #print key
+    #print pairs.keys()
     return min(pairs.keys()) , pairs
 
 
+def test_d(to_test):
+    """ Function to test the candidate to d. In our case, it is a comparasion
+    with the original d. However, in a real case could be the ciphered text with the original
+    and the candidate"""
+    return (d==to_test)
 
 def wide_widow_attack():
     generate_r_js()
@@ -82,7 +96,7 @@ def wide_widow_attack():
         variations.append(list(i))
 
 
-    while(w < n):
+    while(w < (n + window_size + window_size)):
         print "w: ", w
         print "w_prime: ", w_prime
         mod_value = 2**w
@@ -92,11 +106,18 @@ def wide_widow_attack():
         for variation in variations:
             to_iterate.append(variation+d_prime_bin)
         sum_d , d_candidate = sum_all_ds(to_iterate, w, mod_value)
-        d_prime = bin_to_int(d_candidate[sum_d]) % mod_value
+        d_prime = bin_to_int(d_candidate[sum_d])
         print "sum: ", sum_d, " d_candidate = ", int_to_bin(d_prime)
-        w_l = w
+        w_prime = w
         w = w + window_size
 
+        if test_d(d_prime):
+            w = w+n
+
+    if (d == d_prime):
+        print "FOUND KEY."
+    else:
+        print "SORRY"
     print "Finished."
 
 

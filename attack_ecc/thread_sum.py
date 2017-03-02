@@ -20,7 +20,7 @@ class ThreadSum(threading.Thread):
     def __init__(self, threadID, d_list, v_list, alpha_list, N, mod_value, interval):
         threading.Thread.__init__(self)
         self.threadID = threadID
-        self.d_list = d_list
+        self.d_candidates = d_list
         self.v = v_list
         self.alpha = alpha_list
         self.N = N
@@ -31,7 +31,7 @@ class ThreadSum(threading.Thread):
 
     def run(self):
         pairs = {}
-        for d in self.d_list:
+        for d in self.d_candidates:
             sum_hw_d = 0
             for j in xrange(1,self.N):
                 d_prime = bin_to_int(d)+(self.alpha[j]*q) % self.mod_value
@@ -39,13 +39,13 @@ class ThreadSum(threading.Thread):
                 pre_sum = int_to_bin(xor_operation(v_j, d_prime))[-self.interval:].count(1)
                 sum_hw_d = sum_hw_d + pre_sum
             try:
-                #print pairs[sum_hw_d]
                 if pairs[sum_hw_d] <> None:
                     val = pairs[sum_hw_d]
                     if val.count(1) > d.count(1):
                         pairs[sum_hw_d] = d
             except Exception as e:
                 pairs[sum_hw_d] = d
+
         self.key = min(pairs.keys())
         self.d = pairs[self.key]
 

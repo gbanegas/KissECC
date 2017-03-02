@@ -1,14 +1,14 @@
 import random, math
 from itertools import product
 
-n = 512
+n = 1024
 N = 100
 #d = 1123983737618
-#d = 265463185775234288092201526257649332892
+#d = 265463185775234288092201526257649332892133932494809907679736989141210619872096735078276597605954826202148
 d = 13393249480990767973698914121061987209673507827659760595482620214891467806973397091277092174174393961305025200909026701058146674630543302845868229392185528
 q = 2**252 + 27742317777372353535851937790883648493
 window_size = 10
-RANDOMIZED_BITS = 64
+RANDOMIZED_BITS = 1024
 r = []
 v = []
 alpha = []
@@ -41,6 +41,7 @@ def generate_v_values_with_bit_flip():
     for i in xrange(0, N):
         value = d + (alpha[i]*q)
         bit_list = int_to_bin(value)
+        #print len(bit_list)
         bit_list_flipped = bit_flip_random(bit_list)
         value_flipped = bin_to_int(bit_list_flipped)
         v.append(value_flipped)
