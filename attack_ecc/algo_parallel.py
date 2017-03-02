@@ -11,7 +11,7 @@ N = 200
 d = 13393249480990767973698914121061987209673507827659760595482620214891467806973397091277092174174393961305025200909026701058146674630543302845868229392185528
 q = 2**252 + 27742317777372353535851937790883648493
 window_size = 10
-RANDOMIZED_BITS = 692
+RANDOMIZED_BITS = 512
 r = []
 v = []
 alpha = []
@@ -41,6 +41,7 @@ def bit_flip_random(bit_list):
         pos_bit_to_flip = random.randint(0, len(bit_list)-1)
         while(pos_bit_to_flip in pos_list):
             pos_bit_to_flip = random.randint(0, len(bit_list)-1)
+        pos_list.append(pos_bit_to_flip)
         if bit_list_t[pos_bit_to_flip] == 1:
             bit_list_t[pos_bit_to_flip] = 0
         else:
