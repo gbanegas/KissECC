@@ -25,9 +25,16 @@ def bin_to_int(bit_list):
 
 
 def bit_flip_random(bit_list):
+
+    if len(bit_list) < randomized_bits:
+        raise Exception("Randomized bigger then d+(a*r)")
+        print "Lenght: ", len(bit_list)
     bit_list_t = bit_list[:]
+    pos_list = []
     for i in xrange(0, RANDOMIZED_BITS):
         pos_bit_to_flip = random.randint(0, len(bit_list)-1)
+        while(pos_bit_to_flip in pos_list):
+            pos_bit_to_flip = random.randint(0, len(bit_list)-1)
         if bit_list_t[pos_bit_to_flip] == 1:
             bit_list_t[pos_bit_to_flip] = 0
         else:
