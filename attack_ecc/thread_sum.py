@@ -15,6 +15,9 @@ def xor_operation(v, d):
     result = v ^ d
     return result
 
+def getalpha(v,j):
+    return v[j]-v[0]
+
 class ThreadSum(threading.Thread):
 
     def __init__(self, threadID, d_list, v_list, alpha_list, N, mod_value, interval):
@@ -34,7 +37,7 @@ class ThreadSum(threading.Thread):
         for d in self.d_candidates:
             sum_hw_d = 0
             for j in xrange(1,self.N):
-                d_prime = bin_to_int(d)+(self.alpha[j]*q) % self.mod_value
+                d_prime = bin_to_int(d)+(getalpha(self.v,j)) % self.mod_value
                 v_j = self.v[j] % self.mod_value
                 pre_sum = int_to_bin(xor_operation(v_j, d_prime))[-self.interval:].count(1)
                 sum_hw_d = sum_hw_d + pre_sum
@@ -51,3 +54,10 @@ class ThreadSum(threading.Thread):
 
     def return_result(self):
         return self.key, self.d
+
+    def clean(self):
+        del self.v
+        del self.alpha
+        del self.d
+        del self.key
+        self.run = False
