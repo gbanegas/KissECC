@@ -4,22 +4,23 @@ from itertools import product
 from itertools import chain
 from thread_sum import ThreadSum
 
-n = 256
-N = 250
-#d = 1339324948 #31 bits
-d = 265463185775234288092201526257649332892133932494809907679736989141210619872096735078276597605954826202148
+n = 1024
+N = 500
+d = 12339324948 #31 bits
+#d = 2654631857752342880925764945
+#d = 265463185775234288092201526257649332892133932494809907679736989141210619872096735078276597605954826202148
 
 #d = 13393249480990767973698914121061987209673507827659760595482620214891467806973397091277092174174393961305025200909026701058146674630543302845868229392185528
 
-#q = 2**252 + 27742317777372353535851937790883648493 #ed25519
+q = 2**252 + 27742317777372353535851937790883648493 #ed25519
 
 #temp = int("8335dc163bb124b65129c96fde933d8d723a70aadc873d6d54a7bb0d", 16)
-q = 2^446 + 13818066809895115352007386748515426880336692474882178609894547503885 #Ed448-Goldilocks
+#q = 2^446 + 13818066809895115352007386748515426880336692474882178609894547503885 #Ed448-Goldilocks
 
 
-window_size = 5
-RANDOMIZED_BITS = 128
-RANDOMIZE_V_0 = 0
+window_size = 10
+RANDOMIZED_BITS = 20
+RANDOMIZE_V_0 = 5
 r = []
 v = []
 alpha = []
@@ -81,7 +82,6 @@ def bit_flip_random(bit_list, randomness):
 def generate_v_values_with_bit_flip():
     value = d + (alpha[0]*q)
     bit_list = int_to_bin(value)
-    print len(bit_list)
     bit_list_flipped = bit_flip_random(bit_list, RANDOMIZE_V_0)
     value_flipped = bin_to_int(bit_list_flipped)
     v.append(value_flipped)
@@ -110,7 +110,7 @@ def groupsof(n, xs):
 
 def sum_all_ds(d_candidates, interval, mod_value):
     pairs = {}
-    number_of_threads = 10
+    number_of_threads = 15
     ds = list(groupsof(len(d_candidates)/number_of_threads, d_candidates))
     threads = []
     for i in xrange(0, number_of_threads):
