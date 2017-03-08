@@ -4,10 +4,10 @@ from itertools import product
 from itertools import chain
 from thread_sum import ThreadSum
 
-n = 128
-N = 1000
-d = 1339324948 #31 bits
-#d = 265463185775234288092201526257649332892133932494809907679736989141210619872096735078276597605954826202148
+n = 256
+N = 250
+#d = 1339324948 #31 bits
+d = 265463185775234288092201526257649332892133932494809907679736989141210619872096735078276597605954826202148
 
 #d = 13393249480990767973698914121061987209673507827659760595482620214891467806973397091277092174174393961305025200909026701058146674630543302845868229392185528
 
@@ -16,10 +16,9 @@ d = 1339324948 #31 bits
 #temp = int("8335dc163bb124b65129c96fde933d8d723a70aadc873d6d54a7bb0d", 16)
 q = 2^446 + 13818066809895115352007386748515426880336692474882178609894547503885 #Ed448-Goldilocks
 
-print temp
 
 window_size = 5
-RANDOMIZED_BITS = 0
+RANDOMIZED_BITS = 128
 RANDOMIZE_V_0 = 0
 r = []
 v = []
@@ -151,8 +150,6 @@ def wide_widow_attack():
     variations = []
     for i in product([0,1], repeat=window_size):
         variations.append(list(i))
-
-
     while(w < (n + window_size + window_size)):
         print "w: ", w
         print "w_prime: ", w_prime
@@ -173,10 +170,16 @@ def wide_widow_attack():
 
     if (d == d_prime):
         print "FOUND KEY."
+        return True
     else:
         print "SORRY"
+        return False
     print "Finished."
 
+nr_of_attempts = 10
+correct = 0
+for i in xrange(0,nr_of_attempts):
+    if wide_widow_attack():
+        correct = correct + 1
 
-
-wide_widow_attack()
+print "Correct: ", correct, " of ", nr_of_attempts
