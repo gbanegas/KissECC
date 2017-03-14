@@ -28,21 +28,9 @@ def dff(list1, list2):
              outputlist[len(outputlist):] = [list3[i]]
     return outputlist
 
-def bit_flip_random(bit_list):
-    for i in xrange(0, RANDOMIZED_BITS):
-        pos_bit_to_flip = random.randint(0, len(bit_list)-1)
-        #print "Flipping: ", pos_bit_to_flip
-        if bit_list[pos_bit_to_flip] == 1:
-            bit_list[pos_bit_to_flip] = 0
-        else:
-            bit_list[pos_bit_to_flip] = 1
-        #bit = (bit_list[pos_bit_to_flip] + 1 ) % 2
-        #bit_list[pos_bit_to_flip] = bit
-    return bit_list
-
 def generate_v_values():
     for i in xrange(0, N):
-        value = d + (alpha[i]*q)
+        value = d + (r[i]*q)
         v.append(value)
 
 def  generate_alpha_js():
