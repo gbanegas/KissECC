@@ -103,9 +103,14 @@ def wide_widow_attack():
         print "w_prime: ", w_prime
         mod_value = 2**w
         to_iterate = []
-        for d_prime in d_candidate:
+        if len(d_candidate) > 0:
+            for d_prime in d_candidate:
+                for variation in variations:
+                    to_iterate.append(variation+d_prime)
+        else:
             for variation in variations:
-                to_iterate.append(variation+d_prime)
+                to_iterate.append(variation)
+
         sum_d , d_candidate = sum_all_ds(to_iterate, w, w_prime, mod_value)
         print "sum: ", sum_d, " d_candidate = ", d_candidate
         print "sum: ", sum_d, " d_candidate = ", d_candidate[0], " d_ca = ", bin_to_int(d_candidate[0])
