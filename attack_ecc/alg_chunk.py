@@ -2,13 +2,14 @@ import random, math
 import time
 from itertools import product
 
-R = 40
-N = 250
+R = 32
+N = 1000
 #d = 13393249480990767973698914121061987209673507827659760595482620214891467806973397091277092174
-#d = 1233932494 #31 bits
+d = 1233932494 #31 bits
 #d = 23393249481
-d = 133932494809907679736989141210619872096735078276597605954826202148555332 #237 bits
+#d = 133932494809907679736989141210619872096735078276597605954826202148555332 #237 bits
 q = 2**252 + 27742317777372353535851937790883648493
+#q = 2**32
 window_size = 10
 RANDOMIZED_BITS = 0
 r = []
@@ -91,7 +92,7 @@ def wide_widow_attack():
     w_prime = 0
     w = window_size
     #d_prime = [0]
-    d_candidate = [[0]]
+    d_candidate = []
     difference = w - w_prime
     variations = []
     for i in product([0,1], repeat=difference):
