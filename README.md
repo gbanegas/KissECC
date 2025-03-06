@@ -22,7 +22,7 @@ If you are interested in a way to see the code working or if you want to learn w
 
 ### Things that you are going to need: ###
 
-Python >= 2.7.x
+Python >= 3.x
 
 ###References:
 
